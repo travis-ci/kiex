@@ -10,11 +10,11 @@ elixirs_path="${base_path}/elixirs"
 elixirs_source_path="\$HOME/.kiex/elixirs"
 mix_archives_path="${base_path}/mix/archives"
 mix_archives_source_path="\$HOME/.kiex/mix/archives"
-kiex_url="https://raw.githubusercontent.com/taylor/kiex/master/kiex"
+kiex_url="https://raw.githubusercontent.com/travis-ci/kiex/master/kiex"
 cached_release_list="$KIEX_HOME/.cached_release_list"
 cached_branch_list="$KIEX_HOME/.cached_branch_list"
 
-USER_AGENT="kiex-elixir-installer"
+USER_AGENT="travis-kiex-elixir-installer"
 
 SYSTEM=$(uname -s)
 
@@ -67,7 +67,7 @@ if [ "$INSTALL_KIEX" = 1 ] ; then
     exec "$KIEX_HOME/bin/kiex" selfupdate
   else
     mkdir -p "${KIEX_HOME}/bin"
-    \curl -sSL -o "$KIEX_HOME/bin/kiex" https://raw.githubusercontent.com/taylor/kiex/master/kiex
+    \curl -sSL -o "$KIEX_HOME/bin/kiex" https://raw.githubusercontent.com/travis-ci/kiex/master/kiex
     chmod +x "$KIEX_HOME/bin/kiex"
 
     echo "Running initial environment setup"
@@ -421,7 +421,7 @@ function kiex_implode() {
 function get_elixir_branches() {
   # TODO: add cache support
   # x=$(curl -i -H "User-Agent: $USER_AGENT" -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/branches |grep '"name":|ETag:')
-  x=$(\curl -i -H "User-Agent: $USER_AGENT" -H "Accept: application/json" -qs https://api.github.com/repos/elixir-lang/elixir/branches |grep '"name":')
+  x=$(\curl -v -i -H "User-Agent: $USER_AGENT" -H "Accept: application/json" https://api.github.com/repos/elixir-lang/elixir/branches |grep '"name":')
   x=$(echo $x | tr ',' '\n' |grep name\":|sed 's/.*name":"\([^"]*\)"/\1/')
   #x=${x//\"name\":/}
   #x=${x//[\",]/}
@@ -467,7 +467,7 @@ function get_known_elixir_releases() {
 #   xetag=$(echo $x|grep ETag)
 #   x=$(echo $x|grep -v ETag)
 
-  x=$(\curl -i -H "User-Agent: $USER_AGENT" -H 'Accept: application/json' -qs https://api.github.com/repos/elixir-lang/elixir/releases | tr ',' '\n' | grep '"tag_name":')
+  x=$(\curl -v -i -H "User-Agent: $USER_AGENT" -H 'Accept: application/json' https://api.github.com/repos/elixir-lang/elixir/releases | tr ',' '\n' | grep '"tag_name":')
   x=${x//\"tag_name\":/}
   x=${x//[\",]/}
   x=${x//v/}
@@ -567,7 +567,7 @@ function install_elixir() {
 
   if [ ! "$?" = 0 ] ; then
     echo "Problem with Elixir build.  Aborting!"
-    echo "Please report via https://github.com/taylor/kiex/issues/new"
+    echo "Please report via https://github.com/travis-ci/kiex/issues/new"
     exit 1
   fi
 
